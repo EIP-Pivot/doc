@@ -1,0 +1,100 @@
+@startuml
+
+title Components - Component Diagram
+
+package "Pivot library" {
+  component "Entity Component System" as ecs {
+  
+    folder "Scene Manager" as scene_m {
+      component Scene as scene {
+        folder "Entity manager" as entity_m {
+          [Entity] as entity
+          
+          note bottom of entity
+            Entities are simple ids which can
+            be created or destroyed,
+            and can be attached components
+          end note
+        }
+        
+        folder "Component manager" as component_m {
+          [Component] as component
+          
+          note bottom of component
+            Components are some data that can be
+            attached to an entity. A component
+            type can be attached to any number
+            of entities, but an entity either
+            has or has not a speicific component.
+          end note
+        }
+        
+        folder "System manager" as system_m {
+          [System] as system
+          
+          note bottom of system
+            Systems are rules that make changes
+            to the components of entities when
+            certain events happen. For example
+            a system could update the position
+            component based on the speed component
+            each time a physic tick event happens.
+          end note
+        }
+        
+        folder "Event Manager" as event_m {
+          [Event] as event
+          
+          note bottom of event
+            Events contain information about
+            something that happened, and which
+            can implicate any number of entities. 
+          end note
+        }
+        
+        
+        event --> system: triggers
+        event <.. system: listen to
+        event ..> entity: applies on 0 or more
+        system --> component: updates
+        component .> entity: stores data of
+      }
+      
+      note top of scene
+        Scenes contains a specific list
+        of entities, their associated
+        components, and some systems.
+      end note
+    }
+  }
+  
+  component [Graphics library] as graphics
+  component [Scripting engine] as scripting
+  component [Pivot Engine] as pivot
+  
+  pivot --> scene: creates
+}
+component [Game Launcher] as launcher
+component [Editor] as editor
+
+node "Pivot script file" as script_file
+
+note bottom of script_file
+  Script files contain definitions
+  of components and systems.
+end note
+
+script_file ..> component: contains definition
+script_file ..> system: contains definition
+
+node "Scene file" as scene_file
+
+note bottom of scene_file
+  Scene files contain all the
+  information necessary to load
+  a scene in the engine.
+end note
+
+scene_file ..> scene: contains data
+
+@enduml
